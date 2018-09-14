@@ -1,17 +1,17 @@
 /*
-Detalhes do set de instrução
+Detalhes do set de instruÃ§Ã£o
 
-	Tamanho das instruções: 16 bits
+	Tamanho das instruÃ§Ãµes: 16 bits
 	
-	Código das intruções:
+	CÃ³digo das intruÃ§Ãµes:
 	
 		ADD: 	000  	OR:   010		LOAD: 	100
 		MULT: 	001 	AND:  011		STORE:  101
 		 
 
-	Instruções Tipo 1: 
+	InstruÃ§Ãµes Tipo 1: 
 	
-		- Utilizado para operações aritméticas (soma e multiplicação)
+		- Utilizado para operaÃ§Ãµes aritmÃ©ticas (soma e multiplicaÃ§Ã£o)
 	     
              MSB                                      LSB
 		   
@@ -22,25 +22,25 @@ Detalhes do set de instrução
 		   
          - Exemplo: 0b0000000000100010 >>> |000|0000|0001|00010
          
-         	 	Realiza a soma (000 >> tipo da instrução) do registro 0 (0000 
+         	 	Realiza a soma (000 >> tipo da instruÃ§Ã£o) do registro 0 (0000 
  	 	 	 >> end. Reg 1) com o registro 1 (0001 >> end. Reg 2) e salva o resultado
  	 	 	 em registro 2 (00010 >> end. Reg Dest.)	 	 
  	 	 	 
  	 	 	 
-    Instruções Tipo 2:
+    InstruÃ§Ãµes Tipo 2:
     
-     	 - Utlizado para operações de LOAD e STORE
+     	 - Utlizado para operaÃ§Ãµes de LOAD e STORE
      	 
      	       MSB                        LSB
      	 
-     	 (Tipo instr.) (End Reg) (End Memória de dados)
+     	 (Tipo instr.) (End Reg) (End MemÃ³ria de dados)
 
 		    3 bits       4 bits        9 bits
 		    
    	   - Exemplo: 0b1000000000010010 >>> |100|0000|000010000
          
-         	 	Realiza o LOAD (100 >> tipo da instrução) do endereço de 
-			memória 8 (00001000 >> end. Memória) para o registro 0 
+         	 	Realiza o LOAD (100 >> tipo da instruÃ§Ã£o) do endereÃ§o de 
+			memÃ³ria 8 (00001000 >> end. MemÃ³ria) para o registro 0 
 			(0000 >> end. Reg )
  	 	 	 
 */
@@ -99,9 +99,9 @@ int main()
 	
 	while(PC < 7)
 	{
-		Instr = ProgMemory[PC]; // busca da instrução
+		Instr = ProgMemory[PC]; // busca da instruÃ§Ã£o
 		PC = PC + 1;
-		decode();    // decodificação
+		decode();    // decodificaÃ§Ã£o
 		execute();
 	}
 
@@ -115,7 +115,7 @@ void decode(void)
 	
 	if(InstrType == 0 || InstrType == 1 || InstrType == 2 || InstrType == 3)
 	{
-		// Soma , Multiplicação , E e OU
+		// Soma , MultiplicaÃ§Ã£o , E e OU
 		RegSourceA = Instr >> 9;
 		RegSourceA = RegSourceA & 0b0000000000001111;
 		RegSourceB = Instr >> 5;
@@ -132,7 +132,7 @@ void decode(void)
 	else if(InstrType == 5)
 	{
 		// Store
-		RegSourceA = Instr >> 14;
+		RegSourceA = Instr >> 9;
 		RegSourceA = RegSourceA & 0b0000000000001111; 
 		RegAddrMemory = Instr & 0b0000000111111111;
 	}
