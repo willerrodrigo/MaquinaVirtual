@@ -49,7 +49,11 @@ Detalhes do set de instrução
 
 using namespace std;
 
-
+struct linhaCache {
+	bool bitValidacao;
+	unsigned int tag;
+	unsigned int data[4];
+};
 
 // Memoria de programa            
 unsigned int ProgMemory[] = {
@@ -71,6 +75,10 @@ unsigned int ProgMemory[] = {
 // Memoria de dados
 unsigned int DataMemory[] = { 2, 3, 0, 0, 0, 0, 0, 0};
 
+// Memoria de cache
+linhaCache MemoriaCache[4];
+
+
 									
 // Registradores
 unsigned int PC;
@@ -82,13 +90,24 @@ unsigned int RegDest;
 unsigned int RegAddrMemory;
 unsigned int Reg[10];
 
+unsigned int Tag;
+unsigned int Word;
+unsigned int Line;
+
 // Prototipos
 void decode(void);
 void execute(void);
+int buscaNaCache(int);
+int buscaNaPrincipal(int);
 
 int main()
 {
 	unsigned char i;
+	
+	// Inicializacao dos bits de validacao da cache
+	for(i=0; i<4; i++){
+		MemoriaCache[i].bitValidacao = false;
+	}
 	
 	// Inicializacao dos registros
 	PC = 0;
@@ -99,7 +118,7 @@ int main()
 	
 	while(PC < 7)
 	{
-		Instr = ProgMemory[PC]; // busca da instrução
+		Instr = buscaNaCache(PC);  // ProgMemory[PC]; // busca da instrução
 		PC = PC + 1;
 		decode();    // decodificação
 		execute();
@@ -108,6 +127,31 @@ int main()
     return 0;       
 }
 
+int buscaNaCache(int pc){
+	
+	Tag = pc >> 4;
+	Tag = Tag & 0b0000111111111111;
+	Word = pc & 0b0000000000000011;
+	Line = pc >> 2;
+	Line = Line & 0b0000000000000011;
+	
+	if(MemoriaCache[Line].bitValidacao == true && Tag == MemoriaCache[Line].tag){
+		return MemoriaCache[Line].data[Word];
+	}
+	else{
+		for(int i = 0; i < 4; i++)
+		{
+			MemoriaCache[Line].data[i] = buscaNaPrincipal(pc+i);
+		}
+		MemoriaCache[Line].tag = Tag;
+		MemoriaCache[Line].bitValidacao = true;
+		return MemoriaCache[Line].data[Word];
+	}	
+};
+
+int buscaNaPrincipal(int pc){
+	return ProgMemory[pc];
+}
 
 void decode(void)
 {
