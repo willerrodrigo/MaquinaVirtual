@@ -93,6 +93,7 @@ unsigned int Reg[10];
 unsigned int Tag;
 unsigned int Word;
 unsigned int Line;
+unsigned int Aux;
 
 // Prototipos
 void decode(void);
@@ -139,9 +140,10 @@ int buscaNaCache(int pc){
 		return MemoriaCache[Line].data[Word];
 	}
 	else{
+		Aux = pc - Word;
 		for(int i = 0; i < 4; i++)
 		{
-			MemoriaCache[Line].data[i] = buscaNaPrincipal(pc+i);
+			MemoriaCache[Line].data[i] = buscaNaPrincipal(Aux+i);
 		}
 		MemoriaCache[Line].tag = Tag;
 		MemoriaCache[Line].bitValidacao = true;
